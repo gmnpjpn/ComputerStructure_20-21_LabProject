@@ -1,14 +1,12 @@
-
-
-//BLOCK BELOW: COPY-PASTE ALWAYS
-//-------------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------> LIBRARIES
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
+//-------------------------------------------> ESTO NO SÉ QUE HACE
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-//SERVOS DEFINED
+//-------------------------------------------> DEFINES
 #define SERVOMIN 320
 #define SERVOSTOP 380
 #define SERVOMAX 440
@@ -16,56 +14,76 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define servo_left 0
 #define servo_right 1
 
-//INFRARED SENSOR DEFINED
 #define IR_left 2
 #define IR_right 3
-//-------------------------------------------------------------------------------------------------------------------------------
 
 
 void setup() {
-//TWO LINES BELOW: SERVO THINGS
+  //-------------------------------------------> INITIALIZATION OF SERVOS AND IR SENSORS
   pwm.begin();
   pwm.setPWMFreq(60);
 
-//TWO LINES BELOW: IR THINGS
   pinMode (IR_left,INPUT);
   pinMode(IR_right,INPUT);
   Serial.begin(9600);
 
-//-------------------------------------------------------------------------------------------------------------------------------
-//INITIALIZE LED AS AN OUTPUT
+
+  //-------------------------------------------> START SIGNAL WITH LED, IT WILL INDICATE THAT THE ECOBOT STARTS RUNNING
   pinMode(LED_BUILTIN, OUTPUT);
-//LED ON
   digitalWrite(LED_BUILTIN, HIGH);
-//WAIT FOR TWO SECONDS
-  delay(2000);
-//LED OFF
+  delay(500);
   digitalWrite(LED_BUILTIN, LOW);
-//THIS SIGNAL WITH THE LED WILL INDICATE THAT THE ECOBOT IS READY TO EXECUTE THE COMMANDS THAT WE PROGRAM IT
-//-------------------------------------------------------------------------------------------------------------------------------
 }
 
+//-------------------------------------------> METHODS
+  void delayMod(){
+    delay(0);
+  }
+
+  void adelanteRapido() {
+
+    pwm.setPWM(servo_right, 0, SERVOMAX);
+    pwm.setPWM(servo_left, 0, SERVOMIN);
+  }
+
+  void giroDerecha(){
+    pwm.setPWM(servo_right,0,350);
+    pwm.setPWM(servo_left,0,SERVOMIN);
+    delayMod();
+  }
+
+  void giroIzquierda(){
+    pwm.setPWM(servo_right,0,SERVOMAX);
+    pwm.setPWM(servo_left,0,360);
+    delayMod();
+  }
+
+  void stop(){
+    pwm.setPWM(servo_right,0,SERVOSTOP);
+    pwm.setPWM(servo_left,0,SERVOSTOP);
+  }
+
+
 void loop() {
-//IT MAKES THE ECOBOT DRIVE STRAIGHT
-//-------------------------------------------------------------------------------------------------------------------------------
-  pwm.setPWM(servo_left, 1, SERVOMIN);
-  pwm.setPWM(servo_right, 1, SERVOMAX);
-//-------------------------------------------------------------------------------------------------------------------------------
+  //-------------------------------------------> ASSIGNATION OF IR VALUES TO IT'S VARIABLES
+  int valor_IR_left = digitalRead(IR_left);
+  int valor_IR_right = digitalRead(IR_right);
 
-
-//IT MAKES THE ECOBOT DETECT SOMETHING WITH THE IR SENSOR
-//-------------------------------------------------------------------------------------------------------------------------------
-int valor_IR_left = digitalRead(IR_left);
-int valor_IR_right = digitalRead(IR_right);
-
-Serial.print("IR_left: ");
-Serial.print(valor_IR_left);
-
-Serial.print("\t");
-
-Serial.print("IR_right: ");
-Serial.println(valor_IR_right);
-
-delay(100);
-//-------------------------------------------------------------------------------------------------------------------------------
+  //-------------------------------------------> LINE FOLLOWING CODE
+  if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+    stop();
+  }
+  delayMod();
+  if(valor_IR_left==LOW  && valor_IR_right==LOW){
+    adelanteRapido();
+  }
+  delayMod();
+  if (valor_IR_left==HIGH && valor_IR_right==LOW){
+    giroDerecha();
+  }
+  delayMod();
+  if (valor_IR_left==LOW && valor_IR_right==HIGH){
+    giroIzquierda();
+  }
+  delayMod();
 }
