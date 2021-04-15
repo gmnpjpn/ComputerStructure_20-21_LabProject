@@ -1,0 +1,105 @@
+#include "pitches.h"
+
+// notes in the melody:
+int melody[] = { //using note c5 e5 a5 b4 g5
+  NOTE_C5, NOTE_E5, NOTE_A5, NOTE_B4, NOTE_G5
+};
+
+// note durations: 8 = eighth note
+int noteDurations[] = {
+  8,8,8
+};
+
+void setup() {
+  pinMode(8, OUTPUT); //declares pin 8 as an output
+  pinMode(9, OUTPUT); //declares pin 9 as an output
+  
+  // iterate over the notes of the melody:
+      for (int songLoop = 0; songLoop < 3; songLoop++){//loop to play the all the notes several times
+          for (int loop1 = 0; loop1 < 8; loop1++){//loop to play notes c5 e5 a5 right after each other
+              for (int thisNote = 0; thisNote < 3; thisNote++) {
+        
+                  // to calculate the note duration, take one second
+                  // divided by the note type.
+                  //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+                  int noteDuration = 1000 / noteDurations[thisNote];
+                  tone(7, melody[thisNote], noteDuration);
+              
+                  // to distinguish the notes, set a minimum time between them.
+                  int pauseBetweenNotes = noteDuration * 0.5;
+                  delay(pauseBetweenNotes);
+                  // stop the tone playing:
+                  noTone(7);
+                }
+          delay(150);
+          digitalWrite(8, HIGH);   // turn the LED on (HIGH is the voltage level)
+          delay(1);                // wait for a milisecond
+          digitalWrite(8, LOW);    // turn the LED off by making the voltage LOW
+          delay(1);                // wait for a milisecond
+
+          digitalWrite(9, HIGH);   // turn the LED on (HIGH is the voltage level)
+          delay(1);                // wait for a milisecond
+          digitalWrite(9, LOW);    // turn the LED off by making the voltage LOW
+          delay(1);                // wait for a milisecond
+          }
+          for (int loop2 = 0; loop2 < 3; loop2++){ //loop to play notes b4 e5 a5
+            
+            tone(7, NOTE_B4, 125);
+            delay(62.5);
+            noTone(7);
+            
+            tone(7, NOTE_E5, 125);
+            delay(62.5);
+            noTone(7);
+            
+            tone(7, NOTE_A5, 125);
+            delay(62.5);
+            noTone(7);
+            
+            delay(150);
+            
+            digitalWrite(8, HIGH);   // turn the LED on (HIGH is the voltage level)
+            delay(1);                // wait for a milisecond
+            digitalWrite(8, LOW);    // turn the LED off by making the voltage LOW
+            delay(1);                // wait for a milisecond
+            
+          }
+          for (int loop3 = 0; loop3 < 5; loop3++){//loop to play b4 e5 g5
+            
+            tone(7, NOTE_B4, 125);
+            delay(62.5);
+            noTone(7);
+            
+            tone(7, NOTE_E5, 125);
+            delay(62.5);
+            noTone(7);
+            
+            tone(7, NOTE_G5, 125);
+            delay(62.5);
+            noTone(7);
+            
+            delay(150);
+            
+            digitalWrite(9, HIGH);   // turn the LED on (HIGH is the voltage level)
+            delay(1);                // wait for a milisecond
+            digitalWrite(9, LOW);    // turn the LED off by making the voltage LOW
+            delay(1);                // wait for a milisecond
+          }
+          
+          digitalWrite(8, HIGH);   // turn the LED on (HIGH is the voltage level)
+          delay(1);                // wait for a milisecond
+          digitalWrite(8, LOW);    // turn the LED off by making the voltage LOW
+          delay(1);                // wait for a milisecond
+
+          digitalWrite(9, HIGH);   // turn the LED on (HIGH is the voltage level)
+          delay(1);                // wait for a milisecond
+          digitalWrite(9, LOW);    // turn the LED off by making the voltage LOW
+          delay(1);                // wait for a milisecond
+      }
+}
+
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+}
