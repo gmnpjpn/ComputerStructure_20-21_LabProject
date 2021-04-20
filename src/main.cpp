@@ -70,10 +70,9 @@ void setup() {
   }
 
   void stop(){
-    digitalWrite(green_led,HIGH);
+    digitalWrite(green_led,LOW);
     pwm.setPWM(servo_right,0,SERVOSTOP);
     pwm.setPWM(servo_left,0,SERVOSTOP);
-    digitalWrite(green_led,LOW);
   }
 
 
