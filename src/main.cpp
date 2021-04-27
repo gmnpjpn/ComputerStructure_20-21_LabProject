@@ -49,13 +49,13 @@ void setup() {
 
 //---------------------------------------> METHODS
   void delayMod(){
-    delay(0);
+    delay(0); //TEST
   }
 
   void fastForward() {
     digitalWrite(green_led,HIGH);
-    pwm.setPWM(servo_right, 0, 420);
-    pwm.setPWM(servo_left, 0, 340);
+    pwm.setPWM(servo_right, 0, SERVOMAX);
+    pwm.setPWM(servo_left, 0, SERVOMIN);
     digitalWrite(green_led,LOW);
   }
 
@@ -86,7 +86,7 @@ void setup() {
     int valor_IR_right = digitalRead(IR_right);
 
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
-      stop();
+      turnLeft();
     }
     delayMod();
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
@@ -108,7 +108,7 @@ void setup() {
     int valor_IR_right = digitalRead(IR_right);
 
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
-      stop();
+      turnRight();
     }
     delayMod();
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
@@ -149,7 +149,7 @@ void setup() {
 
   void lightSensorFeature(){
     int light = analogRead(A0);
-    if (light>=700){
+    if (light>=600){
       followLine_Left();
     } else {
       followLine_Right();
@@ -157,7 +157,14 @@ void setup() {
   }
 
   void turn180Degree(){
-    turnRight();
+
+    
+  }
+  void turn180WhenButtonIsPressed(){
+    int button_value = digitalRead(button_pin);
+    if (button_value == HIGH) {
+      turn180Degree();
+    }
   }
 
   void showMemoryAdressesOfVariables(){
@@ -168,17 +175,21 @@ void setup() {
     int *valorIRright_Pointer= &valor_IR_right;
     printf("Dirección de memoria de IR derecho: %p \n",valorIRright_Pointer);
   }
-
-  void followLineMiddle_plus_lightSensorFeature(){
-    //IT DOESN'T WORK PROPERLY, ONLY FOLLOW THE LINE IN THE MIDDLE
-    followLine_Middle();
-    lightSensorFeature();
+  
+  void followLineMiddle_And_lightFeatures(){
+    int light = analogRead(A0);
+    while (light<=500){
+      followLine_Middle();
+    }
+    if (light>=600){
+      followLine_Left();
+    } else {
+      followLine_Right();
+    }
   }
 
-
-void loop() {
-  lightSensorFeature();
-  
+void loop(){
+  followLineMiddle_And_lightFeatures();
 
   // int light = analogRead(A0);
   // Serial.print("\nLight: ");
