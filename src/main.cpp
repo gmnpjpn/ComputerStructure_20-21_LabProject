@@ -178,22 +178,23 @@ void setup() {
   
   void followLineMiddle_And_lightFeatures(){
     int light = analogRead(A0);
-    while (light<=500){
+
+    if (light<500){
       followLine_Middle();
-    }
-    if (light>=600){
-      followLine_Left();
-    } else {
+    } else if (light>500 && light<600){
       followLine_Right();
-    }
+    } else {
+      followLine_Left();
+      }
   }
 
-void loop(){
-  followLineMiddle_And_lightFeatures();
 
-  // int light = analogRead(A0);
-  // Serial.print("\nLight: ");
-  // Serial.print(light);
+void loop(){
+
+
+  int light = analogRead(A0);
+  Serial.print("\nLight: ");
+  Serial.print(light);
   // delay(200);
   
   //if (button_value==HIGH){
