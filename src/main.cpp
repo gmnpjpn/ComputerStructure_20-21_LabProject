@@ -54,8 +54,8 @@ void setup() {
 
   void fastForward() {
     digitalWrite(green_led,HIGH);
-    pwm.setPWM(servo_right, 0, SERVOMAX);
-    pwm.setPWM(servo_left, 0, SERVOMIN);
+    pwm.setPWM(servo_right, 0, 420);
+    pwm.setPWM(servo_left, 0, 340);
     digitalWrite(green_led,LOW);
   }
 
@@ -82,7 +82,6 @@ void setup() {
   }
 
   void followLine_Right(){
-    //---------------------------------------> LINE FOLLOWING CODE (RIGTH SIDE)
     int valor_IR_left = digitalRead(IR_left);
     int valor_IR_right = digitalRead(IR_right);
 
@@ -148,6 +147,15 @@ void setup() {
     delayMod();    
   }
 
+  void lightSensorFeature(){
+    int light = analogRead(A0);
+    if (light>=700){
+      followLine_Left();
+    } else {
+      followLine_Right();
+    }
+  }
+
   void turn180Degree(){
     turnRight();
   }
@@ -161,8 +169,25 @@ void setup() {
     printf("Dirección de memoria de IR derecho: %p \n",valorIRright_Pointer);
   }
 
+  void followLineMiddle_plus_lightSensorFeature(){
+    //IT DOESN'T WORK PROPERLY, ONLY FOLLOW THE LINE IN THE MIDDLE
+    followLine_Middle();
+    lightSensorFeature();
+  }
+
 
 void loop() {
+  lightSensorFeature();
+  
+
+  // int light = analogRead(A0);
+  // Serial.print("\nLight: ");
+  // Serial.print(light);
+  // delay(200);
+  
+  //if (button_value==HIGH){
+    //turn180Degree();
+  //}
   /*
   //---------------------------------------> ASSIGNATION OF IR VALUES TO IT'S VARIABLES AND IMPRESSION OF THEIR MEMORY ADRESSES
   int valor_IR_left = digitalRead(IR_left);
@@ -174,11 +199,10 @@ void loop() {
   */
 
 
-  //---------------------------------------> LIGHT SENSOR THINGS
-  int light = analogRead(A0);
+
 
   //---------------------------------------> ULTRASOUND SENSOR THINGS
-  long duration, cm;
+  /* long duration, cm;
   pinMode(pingPin, OUTPUT);
   digitalWrite(pingPin, LOW);
   delayMicroseconds(10);
@@ -191,25 +215,15 @@ void loop() {
   Serial.print(cm);
   Serial.print("cm");
   Serial.println();
-  delay(100);
+  delay(100); */
 
   //---------------------------------------> BUTTON THINGS
-  int button_value = digitalRead(button_pin);
+/*   int button_value = digitalRead(button_pin);
   if (button_value==HIGH){
     pwm.setPWM(servo_right,0,350);
     pwm.setPWM(servo_left,0,SERVOMIN);
   }
-
-
-  followLine_Middle();
-
-  if (light>=100){followLine_Left;} else {followLine_Right;}
-  //CAMBIAR EL VALOR 100 POR LO QUE CORRESPONDA, ES PARA QUE NO DE ERROR SI LO DEJO VACÍO
-  
-  if (button_value==HIGH){
-    turn180Degree();
-  }
-  
+ */
 }
 
 //CONFIGURAR LO RELACIONADO CON EL SENSOR DE ULTRASONIDOS PARA QUE ESQUIVE OBSTÁCULOS
