@@ -185,17 +185,17 @@ void setup() {
       followLine_Right();
     } else {
       followLine_Left();
-      }
+    }
   }
 
-
 void loop(){
-
+  // followLineMiddle_And_lightFeatures();
+  followLine_Middle();
 
   int light = analogRead(A0);
   Serial.print("\nLight: ");
   Serial.print(light);
-  // delay(200);
+  delay(200);
   
   //if (button_value==HIGH){
     //turn180Degree();
