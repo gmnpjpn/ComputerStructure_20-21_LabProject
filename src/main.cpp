@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-//---------------------------------------> ESTO NO SÉ QUE HACE
+//---------------------------------------> ADAFRUIT
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 //---------------------------------------> DEFINES
@@ -48,10 +48,6 @@ void setup() {
 }
 
 //---------------------------------------> METHODS
-  void delayMod(){
-    delay(0); //TEST
-  }
-
   void fastForward() {
     digitalWrite(green_led,HIGH);
     pwm.setPWM(servo_right, 0, SERVOMAX);
@@ -63,7 +59,6 @@ void setup() {
     digitalWrite(red_led,HIGH);
     pwm.setPWM(servo_right,0,350);
     pwm.setPWM(servo_left,0,SERVOMIN);
-    delayMod();
     digitalWrite(red_led,LOW);
   }
 
@@ -71,7 +66,6 @@ void setup() {
     digitalWrite(red_led,HIGH);
     pwm.setPWM(servo_right,0,SERVOMAX);
     pwm.setPWM(servo_left,0,360);
-    delayMod();
     digitalWrite(red_led,LOW);
   }
 
@@ -88,19 +82,15 @@ void setup() {
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       turnLeft();
     }
-    delayMod();
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
       turnRight();
     }
-    delayMod();
     if (valor_IR_left==HIGH && valor_IR_right==LOW){
       turnRight();
     }
-    delayMod();
     if (valor_IR_left==LOW && valor_IR_right==HIGH){
       fastForward();
     }
-    delayMod();
   }
 
   void followLine_Left(){
@@ -110,19 +100,15 @@ void setup() {
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       turnRight();
     }
-    delayMod();
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
       turnLeft();
     }
-    delayMod();
     if (valor_IR_left==HIGH && valor_IR_right==LOW){
       fastForward();
     }
-    delayMod();
     if (valor_IR_left==LOW && valor_IR_right==HIGH){
       turnLeft();
     }
-    delayMod();
   }
 
   void followLine_Middle(){
@@ -132,19 +118,15 @@ void setup() {
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       stop();
     }
-    delayMod();
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
       fastForward();
     }
-    delayMod();
     if (valor_IR_left==HIGH && valor_IR_right==LOW){
       turnRight();
     }
-    delayMod();
     if (valor_IR_left==LOW && valor_IR_right==HIGH){
       turnLeft();
-    }
-    delayMod();    
+    }    
   }
 
   void lightSensorFeature(){
@@ -157,9 +139,9 @@ void setup() {
   }
 
   void turn180Degree(){
-
-    
+    //WE HAVE TO THINK ABOUT IT
   }
+
   void turn180WhenButtonIsPressed(){
     int button_value = digitalRead(button_pin);
     if (button_value == HIGH) {
@@ -167,7 +149,7 @@ void setup() {
     }
   }
 
-  void showMemoryAdressesOfVariables(){
+  void showMemoryAdressesOfVariables(){ //------------------------ NOT VERIFIED METHOD ------------------------
     int valor_IR_left = digitalRead(IR_left);
     int *valorIRleft_Pointer= &valor_IR_left;
     printf("Dirección de memoria de IR izquierdo: %p \n",valorIRleft_Pointer);
@@ -180,22 +162,43 @@ void setup() {
     int light = analogRead(A0);
 
     if (light<500){
-      followLine_Middle();
-    } else if (light>500 && light<600){
-      followLine_Right();
+      followLine_Left;
+    } else if (light>600){
+      followLine_Right;
     } else {
-      followLine_Left();
+      followLine_Middle;
     }
   }
 
-void loop(){
-  // followLineMiddle_And_lightFeatures();
-  followLine_Middle();
+  void lightMeasure(){
+    int light = analogRead(A0);
+    Serial.print("\nLight: ");
+    Serial.print(light);
+    delay(200);
+  }
 
-  int light = analogRead(A0);
-  Serial.print("\nLight: ");
-  Serial.print(light);
-  delay(200);
+  void obstacleDetection(){ // THAT'S THE EXAMPLE CODE, WE HAVE TO IMPLEMENT IT
+    long duration, cm;
+    pinMode(pingPin, OUTPUT);
+    digitalWrite(pingPin, LOW);
+    delayMicroseconds(10);
+    digitalWrite(pingPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(pingPin, LOW);
+    pinMode(pingPin, INPUT);
+    duration= pulseIn(pingPin, HIGH);
+    cm = duration / 29 / 2;
+    Serial.print(cm);
+    Serial.print("cm");
+    Serial.println();
+    delay(100);
+  }
+
+void loop(){
+  
+
+
+
   
   //if (button_value==HIGH){
     //turn180Degree();
