@@ -149,7 +149,7 @@ void setup() {
     }
   }
 
-  void showMemoryAdressesOfVariables(){ //------------------------ NOT VERIFIED METHOD ------------------------
+  void showMemoryAdressesOfVariables(){ //------------------- WE HAVE TO MAKE AN EXPLANATION, NOT A METHOD -------------------
     int valor_IR_left = digitalRead(IR_left);
     int *valorIRleft_Pointer= &valor_IR_left;
     printf("Dirección de memoria de IR izquierdo: %p \n",valorIRleft_Pointer);
@@ -159,15 +159,49 @@ void setup() {
   }
   
   void followLineMiddle_And_lightFeatures(){
+    int valor_IR_left = digitalRead(IR_left);
+    int valor_IR_right = digitalRead(IR_right);
     int light = analogRead(A0);
 
-    if (light<500){
-      followLine_Left;
-    } else if (light>600){
-      followLine_Right;
-    } else {
-      followLine_Middle;
+    if(light<500 && light>250){
+      if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+        turnLeft();
+      }
+      if(valor_IR_left==LOW  && valor_IR_right==LOW){
+        fastForward();
+      }
+      if (valor_IR_left==HIGH && valor_IR_right==LOW){
+        turnRight();
+      }
+      if (valor_IR_left==LOW && valor_IR_right==HIGH){
+        turnLeft();
+      }
+    } else if(light>500){
+      if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+        turnLeft();
+      }
+      if(valor_IR_left==LOW  && valor_IR_right==LOW){
+        turnRight();
+      }
+      if (valor_IR_left==HIGH && valor_IR_right==LOW){
+        turnRight();
+      }
+      if (valor_IR_left==LOW && valor_IR_right==HIGH){
+        fastForward();
+      }
     }
+
+
+
+
+
+    // if (light<200){
+    //   followLine_Left();
+    // } else if (light>350){
+    //   followLine_Right();
+    // } else {
+    //   followLine_Middle();
+    // }
   }
 
   void lightMeasure(){
@@ -195,6 +229,7 @@ void setup() {
   }
 
 void loop(){
+  followLineMiddle_And_lightFeatures();
   
 
 
