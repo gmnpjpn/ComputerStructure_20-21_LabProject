@@ -189,6 +189,21 @@ void setup() {
       if (valor_IR_left==LOW && valor_IR_right==HIGH){
         fastForward();
       }
+    } else if(light<250){
+      if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+        turnRight();
+      }
+      if(valor_IR_left==LOW  && valor_IR_right==LOW){
+        turnLeft();
+      }
+      if (valor_IR_left==HIGH && valor_IR_right==LOW){
+        fastForward();
+      }
+      if (valor_IR_left==LOW && valor_IR_right==HIGH){
+        turnLeft();
+      }      
+    } else{
+      
     }
 
 
