@@ -24,6 +24,12 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 #define button_pin 11
 
+#define SERVO_45deg 300
+#define SERVO_90deg 420
+#define SERVO_135deg 540
+
+int servo_180=2;
+
 
 void setup() {
   //---------------------------------------> INITIALIZATION OF SERVOS, IR SENSORS...
@@ -138,8 +144,10 @@ void setup() {
     }
   }
 
-  void turn180Degree(){
-    //WE HAVE TO THINK ABOUT IT
+  void turn180Degree(){ //WE HAVE TO TRY THAT FUNCTION, AND SEE IF THE LEDS WORK PROPERLY
+    do{
+      turnRight();
+    } while (millis()<=5000);
   }
 
   void turn180WhenButtonIsPressed(){
@@ -147,15 +155,6 @@ void setup() {
     if (button_value == HIGH) {
       turn180Degree();
     }
-  }
-
-  void showMemoryAdressesOfVariables(){ //------------------- WE HAVE TO MAKE AN EXPLANATION, NOT A METHOD -------------------
-    int valor_IR_left = digitalRead(IR_left);
-    int *valorIRleft_Pointer= &valor_IR_left;
-    printf("Dirección de memoria de IR izquierdo: %p \n",valorIRleft_Pointer);
-    int valor_IR_right = digitalRead(IR_right);
-    int *valorIRright_Pointer= &valor_IR_right;
-    printf("Dirección de memoria de IR derecho: %p \n",valorIRright_Pointer);
   }
   
   void followLineMiddle_And_lightFeatures(){
@@ -203,20 +202,19 @@ void setup() {
         turnLeft();
       }      
     } else{
-      
+      if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+      turnRight();
+      }
+      if(valor_IR_left==LOW  && valor_IR_right==LOW){
+      turnLeft();
+      }
+      if (valor_IR_left==HIGH && valor_IR_right==LOW){
+      fastForward();
+      }
+      if (valor_IR_left==LOW && valor_IR_right==HIGH){
+      turnLeft();
+      }
     }
-
-
-
-
-
-    // if (light<200){
-    //   followLine_Left();
-    // } else if (light>350){
-    //   followLine_Right();
-    // } else {
-    //   followLine_Middle();
-    // }
   }
 
   void lightMeasure(){
@@ -241,56 +239,86 @@ void setup() {
     Serial.print("cm");
     Serial.println();
     delay(100);
+
+    if (cm>10){
+      followLineMiddle_And_lightFeatures();
+    } else{
+
+    }
+
+
+
+    // Posición 45º
+    pwm.setPWM(servo_180, 0, SERVO_45deg);
+    delay(2000);
+    // Posición 90º
+    pwm.setPWM(servo_180, 0, SERVO_90deg);
+    delay(2000);
+    // Posición 135º
+    pwm.setPWM(servo_180, 0, SERVO_135deg);
+    delay(2000);
   }
 
 void loop(){
   followLineMiddle_And_lightFeatures();
+
+
+  // int valor_IR_left = digitalRead(IR_left);
+  // int valor_IR_right = digitalRead(IR_right);
+  // int light = analogRead(A0);
+// 
+  // if(light<500 && light>250){
+    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+      // turnLeft();
+    // }
+    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
+      // fastForward();
+    // }
+    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
+      // turnRight();
+    // }
+    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
+      // turnLeft();
+    // }
+  // } else if(light>500){
+    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+      // turnLeft();
+    // }
+    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
+      // turnRight();
+    // }
+    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
+      // turnRight();
+    // }
+    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
+      // fastForward();
+    // }
+  // } else if(light<250){
+    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+      // turnRight();
+    // }
+    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
+      // turnLeft();
+    // }
+    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
+      // fastForward();
+    // }
+    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
+      // turnLeft();
+    // }      
+  // } else{
+    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
+    // turnRight();
+    // }
+    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
+    // turnLeft();
+    // }
+    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
+    // fastForward();
+    // }
+    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
+    // turnLeft();
+    // }
+  // }
   
-
-
-
-  
-  //if (button_value==HIGH){
-    //turn180Degree();
-  //}
-  /*
-  //---------------------------------------> ASSIGNATION OF IR VALUES TO IT'S VARIABLES AND IMPRESSION OF THEIR MEMORY ADRESSES
-  int valor_IR_left = digitalRead(IR_left);
-  int *valorIRleft_Pointer= &valor_IR_left;
-  printf("Dirección de memoria de IR izquierdo: %p \n",valorIRleft_Pointer);
-  int valor_IR_right = digitalRead(IR_right);
-  int *valorIRright_Pointer= &valor_IR_right;
-  printf("Dirección de memoria de IR derecho: %p \n",valorIRright_Pointer);
-  */
-
-
-
-
-  //---------------------------------------> ULTRASOUND SENSOR THINGS
-  /* long duration, cm;
-  pinMode(pingPin, OUTPUT);
-  digitalWrite(pingPin, LOW);
-  delayMicroseconds(10);
-  digitalWrite(pingPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(pingPin, LOW);
-  pinMode(pingPin, INPUT);
-  duration = pulseIn(pingPin, HIGH);
-  cm = duration / 29 / 2;
-  Serial.print(cm);
-  Serial.print("cm");
-  Serial.println();
-  delay(100); */
-
-  //---------------------------------------> BUTTON THINGS
-/*   int button_value = digitalRead(button_pin);
-  if (button_value==HIGH){
-    pwm.setPWM(servo_right,0,350);
-    pwm.setPWM(servo_left,0,SERVOMIN);
-  }
- */
 }
-
-//CONFIGURAR LO RELACIONADO CON EL SENSOR DE ULTRASONIDOS PARA QUE ESQUIVE OBSTÁCULOS
-
-//CONFIGURAR EL SENSOR DE LUZ PARA QUE AL DETECTAR EL FLASH, VAYA POR EL BORDE IZQUIERDO Y AL APAGARLO VAYA POR EL BORDE DERECHO
