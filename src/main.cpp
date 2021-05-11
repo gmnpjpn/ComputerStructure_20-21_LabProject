@@ -30,10 +30,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 int servo_180=2;
 
-unsigned long tiempo1 = 0;
-unsigned long tiempo2 = 0;
-unsigned long tiempoSegundos = 0;
-
+boolean buttonState=false;
+ void turn180degree(){
+    buttonState=true;
+  }
 
 void setup() {
   //---------------------------------------> INITIALIZATION OF SERVOS, IR SENSORS...
@@ -49,14 +49,15 @@ void setup() {
 
   pinMode(button_pin, INPUT);
 
-  tiempo1 = millis();
-
-
   //---------------------------------------> START SIGNAL WITH LED, IT WILL INDICATE THAT THE ECOBOT STARTS RUNNING
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
   delay(500);
   digitalWrite(LED_BUILTIN, LOW);
+
+  attachInterrupt(digitalPinToInterrupt(button_pin),turn180degree,RISING);
+  int button_value = digitalRead(button_pin);
+
 }
 
 //---------------------------------------> METHODS
@@ -150,19 +151,6 @@ void lightSensorFeature(){
   }
 }
 
-void turn180Degree(){ //WE HAVE TO TRY THAT FUNCTION, AND SEE IF THE LEDS WORK PROPERLY
-  do{
-    turnRight();
-  } while (millis()<=5000);
-}
-
-void turn180WhenButtonIsPressed(){
-  int button_value = digitalRead(button_pin);
-  if (button_value == HIGH) {
-     turnRight();
-  }
-}
-
 void followLineMiddle_And_lightFeatures(){
   int valor_IR_left = digitalRead(IR_left);
   int valor_IR_right = digitalRead(IR_right);
@@ -230,75 +218,33 @@ void lightMeasure(){
   delay(200);
 }
 
-void obstacleDetection(){ // THAT'S THE EXAMPLE CODE, WE HAVE TO IMPLEMENT IT
-  long duration, cm;
-  pinMode(pingPin, OUTPUT);
-  digitalWrite(pingPin, LOW);
-  delayMicroseconds(10);
-  digitalWrite(pingPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(pingPin, LOW);
-  pinMode(pingPin, INPUT);
-  duration= pulseIn(pingPin, HIGH);
-  cm = duration / 29 / 2;
-  Serial.print(cm);
-  Serial.print("cm");
-  Serial.println();
-  delay(100);
 
-  //SET SENSOR IN DEFAULT POSITION
-  pwm.setPWM(servo_180, 0, SERVO_90deg);
-  if (cm<10){
-     pwm.setPWM(servo_180, 0, SERVO_135deg);
-     if (cm<10){
-      
-     }
-  } else{
-    followLineMiddle_And_lightFeatures();
-  }
-
-
-
-  // Posición 45º
-  pwm.setPWM(servo_180, 0, SERVO_45deg);
-  delay(2000);
-  // Posición 90º
-  pwm.setPWM(servo_180, 0, SERVO_90deg);
-  delay(2000);
-  // Posición 135º
-  pwm.setPWM(servo_180, 0, SERVO_135deg);
-  delay(2000);
-}
-
-
-
-void finalECoBot(){
+void loop(){
+  //TIME STARTS
+  float time = millis();
+  Serial.println(time/1000);
+  
   int valor_IR_left = digitalRead(IR_left);
   int valor_IR_right = digitalRead(IR_right);
   int light = analogRead(A0);
 
-  //LIGHT AND MOVEMENT FEATURES
-  if(light<500 && light>250){
+  //LIGHT AND MOVEMENT FEATURES, IT'S A COPY
+  if(light<600 && light>250){
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       turnLeft();
-      int button_value = digitalRead(button_pin); 
     }
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
-      fastForward();
-      int button_value = digitalRead(button_pin);  
+      fastForward(); 
     }
     if (valor_IR_left==HIGH && valor_IR_right==LOW){
       turnRight();
-      int button_value = digitalRead(button_pin);     
     }
     if (valor_IR_left==LOW && valor_IR_right==HIGH){
       turnLeft();
-      int button_value = digitalRead(button_pin);      
     }
-  } else if(light>500){
+  } else if(light>600){
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       turnLeft();
-
     }
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
       turnRight();
@@ -338,46 +284,20 @@ void finalECoBot(){
   }
 
   //BUTTON FEATURE
-  int button_value = digitalRead(button_pin);
-  if (button_value == HIGH) {
-    turn180Degree();
+  if (buttonState){
+    digitalWrite(red_led,HIGH);
+    digitalWrite(green_led,LOW);
+    pwm.setPWM(servo_right,0,SERVOMAX);
+    pwm.setPWM(servo_left,0,SERVOMAX);
+    delay(1450);
+    digitalWrite(red_led,LOW);
+    digitalWrite(green_led,HIGH);
+    buttonState=false;
   }
 
-  //OBSTACLE DETECTION FEATURE
-  
-  
-}
-
-void showMemoryAdresses(){
-  int variableInt= 4;
-  int *p_variableInt= &variableInt; 
-  double variableDouble= 4.67;
-}
-
-void time(){
-  tiempo2 = millis();
-  if(tiempo2 > (tiempo1+1000)){  //Si ha pasado 1 segundo ejecuta el IF
-  tiempo1 = millis(); //Actualiza el tiempo actual
-  tiempoSegundos = tiempo1/1000;
-  Serial.print("Han transcurrido ");
-  Serial.print(tiempoSegundos);
-  Serial.println(" segundos de tiempo de ejecución");
-  }
-}
-
-
-void loop(){
-  float time = millis();
-
-
-
-
-
-
-
-
-
+  //TIME FINISH
   if (time < 100){
+    Serial.print("Tiempo De Loop: ");
     Serial.println(time);
   }
 }
