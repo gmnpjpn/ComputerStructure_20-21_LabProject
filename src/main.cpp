@@ -30,6 +30,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 int servo_180=2;
 
+unsigned long tiempo1 = 0;
+unsigned long tiempo2 = 0;
+unsigned long tiempoSegundos = 0;
+
 
 void setup() {
   //---------------------------------------> INITIALIZATION OF SERVOS, IR SENSORS...
@@ -44,6 +48,8 @@ void setup() {
   pinMode (green_led, OUTPUT);
 
   pinMode(button_pin, INPUT);
+
+  tiempo1 = millis();
 
 
   //---------------------------------------> START SIGNAL WITH LED, IT WILL INDICATE THAT THE ECOBOT STARTS RUNNING
@@ -153,7 +159,7 @@ void turn180Degree(){ //WE HAVE TO TRY THAT FUNCTION, AND SEE IF THE LEDS WORK P
 void turn180WhenButtonIsPressed(){
   int button_value = digitalRead(button_pin);
   if (button_value == HIGH) {
-    turn180Degree();
+     turnRight();
   }
 }
 
@@ -275,19 +281,24 @@ void finalECoBot(){
   if(light<500 && light>250){
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       turnLeft();
+      int button_value = digitalRead(button_pin); 
     }
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
       fastForward();
+      int button_value = digitalRead(button_pin);  
     }
     if (valor_IR_left==HIGH && valor_IR_right==LOW){
       turnRight();
+      int button_value = digitalRead(button_pin);     
     }
     if (valor_IR_left==LOW && valor_IR_right==HIGH){
       turnLeft();
+      int button_value = digitalRead(button_pin);      
     }
   } else if(light>500){
     if(valor_IR_left==HIGH && valor_IR_right==HIGH){
       turnLeft();
+
     }
     if(valor_IR_left==LOW  && valor_IR_right==LOW){
       turnRight();
@@ -327,74 +338,46 @@ void finalECoBot(){
   }
 
   //BUTTON FEATURE
-  turn180WhenButtonIsPressed();
+  int button_value = digitalRead(button_pin);
+  if (button_value == HIGH) {
+    turn180Degree();
+  }
 
   //OBSTACLE DETECTION FEATURE
   
   
 }
 
+void showMemoryAdresses(){
+  int variableInt= 4;
+  int *p_variableInt= &variableInt; 
+  double variableDouble= 4.67;
+}
+
+void time(){
+  tiempo2 = millis();
+  if(tiempo2 > (tiempo1+1000)){  //Si ha pasado 1 segundo ejecuta el IF
+  tiempo1 = millis(); //Actualiza el tiempo actual
+  tiempoSegundos = tiempo1/1000;
+  Serial.print("Han transcurrido ");
+  Serial.print(tiempoSegundos);
+  Serial.println(" segundos de tiempo de ejecución");
+  }
+}
+
 
 void loop(){
-  followLineMiddle_And_lightFeatures();
+  float time = millis();
 
 
-  // int valor_IR_left = digitalRead(IR_left);
-  // int valor_IR_right = digitalRead(IR_right);
-  // int light = analogRead(A0);
-// 
-  // if(light<500 && light>250){
-    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
-      // turnLeft();
-    // }
-    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
-      // fastForward();
-    // }
-    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
-      // turnRight();
-    // }
-    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
-      // turnLeft();
-    // }
-  // } else if(light>500){
-    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
-      // turnLeft();
-    // }
-    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
-      // turnRight();
-    // }
-    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
-      // turnRight();
-    // }
-    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
-      // fastForward();
-    // }
-  // } else if(light<250){
-    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
-      // turnRight();
-    // }
-    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
-      // turnLeft();
-    // }
-    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
-      // fastForward();
-    // }
-    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
-      // turnLeft();
-    // }      
-  // } else{
-    // if(valor_IR_left==HIGH && valor_IR_right==HIGH){
-    // turnRight();
-    // }
-    // if(valor_IR_left==LOW  && valor_IR_right==LOW){
-    // turnLeft();
-    // }
-    // if (valor_IR_left==HIGH && valor_IR_right==LOW){
-    // fastForward();
-    // }
-    // if (valor_IR_left==LOW && valor_IR_right==HIGH){
-    // turnLeft();
-    // }
-  // }
-  
+
+
+
+
+
+
+
+  if (time < 100){
+    Serial.println(time);
+  }
 }
